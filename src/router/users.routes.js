@@ -1,15 +1,20 @@
 import UserManager from "../DAO/manager/UserManager.js";
 import { Router } from "express";
+import { createHash, isValidPassword } from "../utils.js"; //MODIFIQUÉ ACÁ REF.LOGIN
+
 
 
 const userRouter = Router();
 const user = new UserManager();
-
+//NOTA PARA DESPUÉS: SERÁ QUE ACÁ DEBO CREAR EL CREATEHASH, PORQUE ABAJO ESTÁ VALIDANDO PERO ACÁ ESTÁ CREANDO 
 userRouter.post("/formRegister", async (req, res) => {
     try {
         console.log("Datos recibidos del formulario:", req.body);
         const newUser = req.body;
         console.log("Nuevo usuario recibido:", newUser);
+
+        newUser.password = createHash(newUser.password); //SE MODIFICÓ ACÁ PARA REF.LOGIN createHash
+
         const result = await user.addUser(newUser);
         console.log("Resultado de addUser:", result);
         res.redirect("/login");
@@ -22,13 +27,14 @@ userRouter.post("/formRegister", async (req, res) => {
 userRouter.post("/login", async (req, res) => {
     try {
         const email = req.body.email;
-        const password = req.body.password;
+        const password = req.body.password; 
         console.log("Intento de inicio de sesión con email:", email);
 
         const authenticatedUser = await user.validateUser(email);
         console.log("Usuario validado:", authenticatedUser);
 
-        if (authenticatedUser && authenticatedUser.password === password) {
+       // if (authenticatedUser && authenticatedUser.password === password) {
+        if (authenticatedUser && isValidPassword(authenticatedUser, password)) { //MODIFIQUÉ ACÁ REF.LOGIN CON isValidPassword
             console.log("Inicio de sesión exitoso");
 
             req.session.nomUsuario = authenticatedUser.first_name;

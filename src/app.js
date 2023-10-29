@@ -119,6 +119,14 @@ app.get("/userProfile", (req, res) => {
   });
 });
 
+app.get("/logout", (req, res) => {
+  req.session.destroy((error) => {
+      if (error) {
+          return res.json({ status: 'Cerrar sesión Error', body: error });
+      }
+      res.redirect('/login'); // Redirige al usuario a la página de inicio de sesión después de cerrar sesión
+  });
+});
 
 
 
