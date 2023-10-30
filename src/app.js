@@ -1,4 +1,5 @@
 import express from "express"; //importación de express
+import initializaPassport from "./config/passport.config.js";//REF.LOGIN
 import productRouter from "./router/product.routes.js";
 import CartRouter from "./router/cart.routes.js";
 import { engine } from "express-handlebars"; /*importación de módulo express-handlebars, osea la biblio para usar motores de plantillas handlebars con express */
@@ -11,8 +12,10 @@ import MongoStore from "connect-mongo"
 import session from 'express-session'
 import FileStore from 'session-file-store'
 import userRouter from "./router/users.routes.js";
+//import viewsRouter from "./router/views.routes.js";//REF.LOGIN
+import sessionsRouter from "./router/sessions.router.js";//REF.LOGIN
+import passport from "passport";//REF.LOGIN
 
-//import initializaPassport from "./config/passport.config.js";
 
 const app = express(); //aquí la creación de la instancia de la apli express
 const httpServer = app.listen(8080, () => console.log("servidor en el puerto 8080")); //definición del puerto http
@@ -48,9 +51,14 @@ app.use(session({
   })
 );
 
-app.use("/api/productos", productRouter)
+initializaPassport(passport)//REF.LOGIN
+app.use(passport.initialize()) //REF.LOGIN
+app.use(passport.session())//REF.LOGIN
+
+
+app.use("/api/productos", productRouter) 
 app.use("/api/carritos", CartRouter);
-app.use("/api/sessions", userRouter)
+app.use("/api/sessions", sessionsRouter)
 
 //estos middlewars son toda la extructura de handlebars
 app.engine("handlebars", engine());  /*acá le digo al servidor que usaremos M.P.handlebars para el uso de express y que será a
@@ -62,6 +70,8 @@ es una ruta absoluta al directorio de vistas que utiliza __dirname que he import
 //middleware para archivos estáticos
 app.use("/", express.static(__dirname + "/public")) /*con __dirname le índico que en puclic estarán los archivos estáticos como el 
 style.css y realtimeproduct.js dentro de public*/
+
+
 
 app.get("/products", async (req, res) => {
   if (req.session.emailUsuario) {

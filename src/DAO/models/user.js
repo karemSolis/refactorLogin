@@ -2,7 +2,7 @@ import mongoose from "mongoose"
 
 const usersCollection = "usuarios";
 
-const userSchema = new mongoose.Schema({
+const usersSchema = new mongoose.Schema({
     first_name: String,
     last_name: String,
     email: String, //para login 
@@ -11,4 +11,6 @@ const userSchema = new mongoose.Schema({
     rol: String //rol para ver hacia donde se dirige la página 
 })
 
-export const usersModel = mongoose.model(usersCollection, userSchema)
+export const usersModel = mongoose.model(usersCollection, usersSchema)
+
+export default usersModel
