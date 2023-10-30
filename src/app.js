@@ -12,6 +12,8 @@ import session from 'express-session'
 import FileStore from 'session-file-store'
 import userRouter from "./router/users.routes.js";
 
+//import initializaPassport from "./config/passport.config.js";
+
 const app = express(); //aquí la creación de la instancia de la apli express
 const httpServer = app.listen(8080, () => console.log("servidor en el puerto 8080")); //definición del puerto http
 const fileStorage = FileStore(session)
@@ -31,11 +33,11 @@ mongoose.connect('mongodb+srv://soliskarem:yHO8pYSTC6sFsoi1@coder.9lutzzn.mongod
     console.error("Error de conexión a MongoDB Atlas: ", error);
   });
 
-app.use(
-  session({
+app.use(session({
     store: MongoStore.create({
       mongoUrl: "mongodb+srv://soliskarem:yHO8pYSTC6sFsoi1@coder.9lutzzn.mongodb.net/?retryWrites=true&w=majority",
       mongoOptions: { useNewUrlParser: true, useUnifiedTopology: true },
+      ttl : 600
     }),
     secret: "ClaveSecretaSeguraYUnicajojojo",
     resave: false,

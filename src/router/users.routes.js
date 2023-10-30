@@ -1,16 +1,18 @@
 import UserManager from "../DAO/manager/UserManager.js";
 import { Router } from "express";
 import { createHash, isValidPassword } from "../utils.js"; //MODIFIQUÉ ACÁ REF.LOGIN
+import passport from "passport"; //REF.LOGIN
 
 
 
 const userRouter = Router();
 const user = new UserManager();
 //NOTA PARA DESPUÉS: SERÁ QUE ACÁ DEBO CREAR EL CREATEHASH, PORQUE ABAJO ESTÁ VALIDANDO PERO ACÁ ESTÁ CREANDO 
-userRouter.post("/formRegister", async (req, res) => {
+userRouter.post("/formRegister", passport.authenticate('formRegister',{failureRedirect:'/failformRegister'}), async (req, res) => { //MODIFIQUÉ ACÁ REF.LOGIN
     try {
         console.log("Datos recibidos del formulario:", req.body);
         const newUser = req.body;
+        res.send({status:"success", message:"Usuario registrado"})
         console.log("Nuevo usuario recibido:", newUser);
 
         newUser.password = createHash(newUser.password); //SE MODIFICÓ ACÁ PARA REF.LOGIN createHash
@@ -24,7 +26,7 @@ userRouter.post("/formRegister", async (req, res) => {
     }
 });
 
-userRouter.post("/login", async (req, res) => {
+userRouter.post("/login", passport.authenticate('login',{failureRedirect:'/faillogin'}), async (req, res) => { //MODIFIQUÉ ACÁ REF.LOGIN
     try {
         const email = req.body.email;
         const password = req.body.password; 
@@ -46,7 +48,7 @@ userRouter.post("/login", async (req, res) => {
             res.redirect("/login?error=auth_failed"); // Redirige de vuelta a la página de inicio de sesión con un mensaje de error
         }
     } catch (error) {
-        // Manejo de errores
+   
         console.error('Error al iniciar sesión:', error);
         res.status(500).send("Error al iniciar sesión: " + error.message);
     }
@@ -71,9 +73,11 @@ userRouter.get("/userProfile", (req, res) => {
     }
 });
 
+userRouter.get("/faillogin", (req, res)=>{  //MODIFIQUÉ ACÁ REF.LOGIN
+    res.send({error:"login fallido"})
+})
 
-
-userRouter.get("/logout", (req, res) => { //En este caso, "/logout" es una ruta que se utiliza para gestionar el cierre de sesión de un usuario
+userRouter.get("/logout", (req, res) => { //En este caso, "/logout" es una ruta que se utiliza para gestionar el cierre de sesión de un usuario 
     req.session.destroy((error) => {
         if (error) {
             return res.json({ status: 'Cerrar sesión Error', body: error });
