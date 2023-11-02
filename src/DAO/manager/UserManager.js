@@ -1,4 +1,6 @@
 import { usersModel } from "../models/user.js"
+import { createHash, isValidPassword } from "../../utils.js";
+
 class UserManager {
     constructor() {
         this.userModel = usersModel;
@@ -8,7 +10,7 @@ class UserManager {
     async addUser(user) {
         try {
             console.log("Intentando agregar nuevo usuario:", user);
-            const newUser = new this.userModel(user);
+            const newUser = new this.userMode.create(user);
             await newUser.save();
             console.log("Usuario creado correctamente:", newUser);
             return 'Usuario creado correctamente';
@@ -101,6 +103,17 @@ class UserManager {
             return 'Error al validar usuario: ' + error.message;
         }
     }
+
+//-------------------------------------------
+
+    // async isValidPassword (password, hashedPassword) {
+    //     try {
+    //         return await bcrypt.compare(password, hashedPassword);
+    //       } catch (error) {
+    //         console.error("Error al comparar contraseñas:", error);
+    //         return false;
+    //       }
+    // }
 
 }
 

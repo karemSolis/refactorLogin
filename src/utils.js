@@ -11,13 +11,28 @@ import bcrypt from 'bcrypt'
 y va a devover => un bcypt.hashsync que corresponde a un método de la libbrería que hemos instalado y va a agarrar a nuestro password y
 codificarlo con bcrypt.genSaltync y 10 correspondería a la solicitud del valor que nos va a dar, IMPORTANTE ES QUE NO PODEMOS USAR IF PARA 
 VALIDARLO PORQUE CADA VEZ QUE QUIERA ACCEDER AL PASSWORD EL HASH SE IRÁ MODIFICANDO PARA QUE NO VEA, PERO POR DETRÁS BCRYPT SI SABRÁ LO QUE EXISTE*/
-export const createHash = password => bcrypt.hashSync(password, bcrypt.genSaltSync(10))
+
+//export const createHash = password => bcrypt.hashSync(password, bcrypt.genSaltSync(10))
+
+export const createHash = async password => {
+    const saltRounds = 10
+    return await bcrypt.hash(password, saltRounds)
+}
+
 
 /* para validar usamos esta otra función, la cual se llama isvalidpassword y recibe user y password, lo que hará será comparar las dos 
 cosas con bcrypt.comparesSync, el password y el user.password*/
 
-export const isValidPassword = (user, password) => bcrypt.compareSync(password, user.password)
+//export const isValidPassword = (user, password) => bcrypt.compareSync(password, user.password)
 
+export const isValidPassword = (password, hashedPassword) => {
+    try {
+      return bcrypt.compareSync(password, hashedPassword);
+    } catch (error) {
+      console.error("Error al comparar contraseñas:", error);
+      return false;
+    }
+  };
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------------------------//
 
@@ -29,3 +44,6 @@ la ruta absoluta del directorio actual. */
 export default __dirname //y al final se exporta para que desde otros mod se pueda acceder a esta ruta abs.
 
 //con todo esto puedo decirle al servidor donde encontrar los archivos desde app.js y servirá en todas las partes donde necesite __dirname
+
+
+
