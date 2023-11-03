@@ -17,7 +17,9 @@ const initializaPassport = () => {
             const { first_name, last_name, email, age, rol } = req.body;
 
         try {
-            let user = await usersManager.validateUser({ email: username })
+            //let userEmail = 'soliskarem@gmail.com';
+            let user = await usersManager.validateUser(username);
+            //let user = await usersManager.validateUser({ email: username })
             if (user && typeof user === 'object') {
                 console.log("El usuario ya está registrado")
                 return done(null, false)
@@ -45,45 +47,31 @@ const initializaPassport = () => {
      ))
 
     passport.serializeUser((user, done)=>{
-        done(null, user._id)
+        done(null, user.id)
     })
 
-    passport.deserializeUser(async(id,done)=>{
-        let user = await usersManager.getUserById(id)
-        done(null,user)
-    })
 
-    
+    passport.deserializeUser(async (id, done) => {
+        try {
+            const user = await usersManager.getUserById(id);
+            done(null, user);
+        } catch (error) {
+            done(error, null);
+        }
+    });
 
     passport.use('login', new localStrategy({ usernameField: "email" }, async (username, password, done) => {
-       
-       /* try {
-            const user = await usersManager.validateUser({ email: username })
-            if (!user) {
-                console.log("No se encuentra al usuario o no existe")
-                return done(null, false)
-            }
-            if (!isValidPassword(user, password))
-                return done(null, false)
-            return done(null, user)
 
-        } catch (error) {
-            return done(error)
-
-        }
-    }))*/
-
-   //--------------------------------------------
     try {
         const user = await usersManager.validateUser({ email: username });
         if (!user) {
             console.log("No se encuentra al usuario o no existe");
             return done(null, false);
         }
-        if (user === 'Usuario no encontrado') {
+        //if (user === 'Usuario no encontrado') {
        
-            return done(null, false);
-        }
+            //return done(null, false);
+        //}
         
 
         if (!isValidPassword(user, password)) {
@@ -98,12 +86,12 @@ const initializaPassport = () => {
     }
 }));
 
-    passport.use("guthub", new GitHubStrategy({
+    passport.use('guthub', new GitHubStrategy({
         clientID:"Iv1.1cce9042759205e6",
         clientSecret:"a2d0ba463574bdba7a4510457354336ba2d203ab",
         callbackURL:"http://localhost:8080/api/sessions/githubcallback" //se puede poner cualquier url mientras que corresponda al localhost8080 que es el puerto que estamos usando
         
-    }, async(accessToken, refreshToken, profile,done)=>{
+    }, async(accessToken, refreshToken, profile, done)=>{
         try {
             console.log(profile)
             let user = await usersManager.validateUser({email:profile.__json.email})

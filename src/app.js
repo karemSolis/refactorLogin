@@ -40,6 +40,7 @@ mongoose.connect('mongodb+srv://soliskarem:yHO8pYSTC6sFsoi1@coder.9lutzzn.mongod
     console.error("Error de conexión a MongoDB Atlas: ", error);
   });
 
+
 /*LA CONFIGURACIÓN DE SESSION QUE ESTABLECE UNA CONEXIÓN CON ATLAS UTILIZANDO CREDENCIALES, ENTONCES ESTA ES LA PARTE DEL CÓDIGO QUE CONFIGURA
 LAS SESIONES DE MI APP USANDO MÓDULO EXPRESS-SESSIONS QUE SE INTALA POR LA TERMINAL Y SE IMPORTA ACÁ*/
 
@@ -61,14 +62,7 @@ app.use(session({
   })
 );
 
-/*CONFIGURACIÓN DE PASSPORT*/
-initializaPassport(passport)/*ESTA LÍNEA LLAMA A UNA FUNCIÓN QUE LE PASA EL OBJETO PASSPORT COMO EL ARGUMENTO, CONFIGURANDO PASSPORT Y DEFINIENDO 
-ESTRATEGIAS DE AUTENTIFICACIÓN LAS CUALES ESTÁN EN ARCHIVO PASSPORT.CONFIG.JS.*/
-app.use(passport.initialize()) /*INICIALIZA PASSPORT Y LO PREPARA PARA PROCESAR LAS SOLICITUDES, ES IMPORTANTE AGREGARLO ANTES DE LAS RUTAS
-QUE REQUIERAN AUTENTIFICACIÓN */
-app.use(passport.session())/*ESTE ADMINISTRA SESIONES DE PASSPORT. PARA SERIALIZARLAS O DESERIALIZAR USUARIOS EN LAS SESIONES PERMITIENDO 
-A LA PP MANTENER UN SEGUIMIENTO DEL ESTADO DE AUTENTIFICACIÓN DEL USUARIO ENTRE LAS SOLICITUDAS, PERMITIENDO RESTAUSAR SESIONES DE USUARIO Y MANTENER
-UN SEGUIMIENTO DE SI UN USUARIO ESTÁ AUTENTICADO */
+
 
 //ENRUTADORES. 
 app.use("/api/productos", productRouter) /*ESTABLECE UNA RUTA BASE Y LA ASOCIA CON EL ENRUTADOR PRODUCTROUTER, CUANDO UNA SOLICITUD  LLEGA A UNA RUTA
@@ -137,6 +131,12 @@ app.get("/login", (req, res) => {
     title: "Iniciar Sesión"
   });
 });
+//-----------------------------------------------------------------
+
+app.get('/faillogin', (req, res) => {
+  res.send('Autenticación fallida. Por favor, verifica tus credenciales.');
+});
+
 
 //-----------------------------------------------------------------
 

@@ -10,7 +10,8 @@ class UserManager {
     async addUser(user) {
         try {
             console.log("Intentando agregar nuevo usuario:", user);
-            const newUser = new this.userMode.create(user);
+            //const newUser = new this.userModel.create(user);
+            const newUser = await this.userModel.create(user);
             await newUser.save();
             console.log("Usuario creado correctamente:", newUser);
             return 'Usuario creado correctamente';
@@ -57,7 +58,9 @@ class UserManager {
     async getUserById(id) {
         try {
             const user = await this.userModel.findById(id).lean();
+            
             if (!user) {
+
                 return 'Usuario no encontrado';
             }
             console.log("Usuario obtenido por ID:", user);
