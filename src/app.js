@@ -32,7 +32,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
 //ESTABLECE CONEX A LA BASE DE DATOS 
-mongoose.connect('mongodb+srv://soliskarem:yHO8pYSTC6sFsoi1@coder.9lutzzn.mongodb.net/?retryWrites=true&w=majority', { useNewUrlParser: true, useUnifiedTopology: true })
+mongoose.connect('mongodb+srv://soliskarem:yHO8pYSTC6sFsoi1@coder.9lutzzn.mongodb.net/?retryWrites=true&w=majority')
   .then(() => {
     console.log("Conexión a MongoDB Atlas exitosa");
   })
@@ -62,6 +62,10 @@ app.use(session({
   })
 );
 
+//passport.config
+(initializaPassport())
+app.use(passport.initialize())
+app.use(passport.session())
 
 
 //ENRUTADORES. 
@@ -122,7 +126,7 @@ app.get("/carts", async (req, res) => {
   console.log("Datos del carrito:", cart);
   res.render("carts", { cart, productsInCart });
 });
-
+//RECORDAR INTEGRAR EL TEMA DE ID A ESTE MIDDLEWARS
 //-----------------------------------------------------------------
 
 app.get("/login", (req, res) => {
@@ -157,7 +161,7 @@ app.get('/failformRegister', (req, res) => {
 
 
 //------------------------------------------------------------------
-
+/*
 app.get("/userProfile", (req, res) => {
   console.log("Valores de sesión:", req.session);
   res.render("userProfile", {
@@ -167,7 +171,21 @@ app.get("/userProfile", (req, res) => {
     email: req.session.emailUsuario,
     rol: req.session.rolUsuario,
   });
-});
+});*/
+app.get("/userProfile", async (req, res) => { 
+  if (!req.session.emailUsuario) 
+  {
+      return res.redirect("/login")
+  }
+  res.render("userProfile", {
+      title: "Vista Profile Admin",
+      first_name: req.session.nomUsuario,
+      last_name: req.session.apeUsuario,
+      email: req.session.emailUsuario,
+      rol: req.session.rolUsuario,
+
+  });
+})
 
 //-------------------------------------------------------------------
 

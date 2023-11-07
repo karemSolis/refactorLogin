@@ -7,21 +7,28 @@ class UserManager {
 
     }
 
-    async addUser(user) {
-        try {
-            console.log("Intentando agregar nuevo usuario:", user);
-            //const newUser = new this.userModel.create(user);
-            const newUser = await this.userModel.create(user);
-            await newUser.save();
-            console.log("Usuario creado correctamente:", newUser);
-            return 'Usuario creado correctamente';
-        } catch (error) {
-            console.error('Error al crear el usuario:', error);
-            return 'Error al crear el usuario';
-        }
+async addUser(user) {
+    try {
+      const { first_name, last_name, email, age, rol } = user;
+      const password = user.password; // Aquí se obtiene la contraseña
+  
+      console.log("Intentando agregar nuevo usuario:", user);
+      
+      const newUser = await this.userModel.create({ first_name, last_name, email, age, rol, password });
+      await newUser.save();
+      
+      console.log("Usuario creado correctamente:", newUser);
+      return 'Usuario creado correctamente';
+    } catch (error) {
+      console.error('Error al crear el usuario:', error);
+      return 'Error al crear el usuario';
     }
+  }
+  
+  
+  
 
-
+    //actualiza al usuario que ya existe en la base de datos 
     async updateUser(id, updatedUser) {
         try {
             const userToUpdate = await this.userModel.findById(id);
@@ -42,7 +49,7 @@ class UserManager {
     }
 
 
-
+//obtiene a todos los usuarios 
     async getUsers() {
         try {
             const users = await this.userModel.find({});
@@ -54,7 +61,7 @@ class UserManager {
         }
     }
 
-
+//obtienen usuario por su id 
     async getUserById(id) {
         try {
             const user = await this.userModel.findById(id).lean();
@@ -71,7 +78,7 @@ class UserManager {
         }
     }
 
-
+//borra usuario por su id 
     async deleteUser(id) {
         try {
             const user = await this.userModel.findById(id);
@@ -89,34 +96,57 @@ class UserManager {
         }
     }
 
-
-    async validateUser(email) {
+    /*async validateUser(email) {
+        
         try {
             console.log("Buscando usuario con email:", email);
-            const user = await this.userModel.findOne({ email });
-            console.log("Usuario encontrado:", user);
-
-            if (!user) {
-                return 'Usuario no encontrado';
+            let user;
+    
+            if (typeof email === 'object') {
+                user = await this.userModel.findOne(email); //saqué el const user porq ya había declarado la variable en let user 
+                console.log("Usuario encontrado:", user);
+            } else if (typeof email === 'string') {
+                user = await this.userModel.findOne({ email }); //saqué el const user porq ya había declarado la variable en let user 
+                console.log("Usuario encontrado:", user);
+            } else {
+                throw new Error('Formato de email no válido');
             }
-
+    
+            if (!user) {
+                return 'No se encuentra usuario';
+            }
+    
             return user;
         } catch (error) {
             console.error('Error al validar usuario:', error);
             return 'Error al validar usuario: ' + error.message;
         }
-    }
+    }*/
+    async findUser(email) {
+        try {
+          const user = await this.userModel.findOne({ email }, { email: 1, first_name: 1, last_name: 1, password: 1, rol:1 });
+      
+          if (!user) {
+            return "Usuario no encontrado";
+          }
+      
+          return user;
+        } catch (error) {
+          console.error('Error al validar usuario', error);
+          return 'Error al obtener el usuario';
+        }
+      }
 
-//-------------------------------------------
-
-    // async isValidPassword (password, hashedPassword) {
-    //     try {
-    //         return await bcrypt.compare(password, hashedPassword);
-    //       } catch (error) {
-    //         console.error("Error al comparar contraseñas:", error);
-    //         return false;
-    //       }
-    // }
+      async findEmail(param) {
+        try {
+          const user = await this.userModel.findOne(param)    
+          return user
+        } catch (error) {
+          console.error('Error al validar usuario', error);
+          return 'Error al obtener el usuario';
+        }
+      }
+    
 
 }
 

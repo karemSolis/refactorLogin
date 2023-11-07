@@ -23,16 +23,16 @@ export const createHash = async password => {
 /* para validar usamos esta otra función, la cual se llama isvalidpassword y recibe user y password, lo que hará será comparar las dos 
 cosas con bcrypt.comparesSync, el password y el user.password*/
 
-//export const isValidPassword = (user, password) => bcrypt.compareSync(password, user.password)
+export const isValidPassword = (user, password) => bcrypt.compareSync(password, user.password)
 
-export const isValidPassword = (password, hashedPassword) => {
-    try {
-      return bcrypt.compareSync(password, hashedPassword);
-    } catch (error) {
-      console.error("Error al comparar contraseñas:", error);
-      return false;
-    }
-  };
+// export const isValidPassword = (password, hashedPassword) => {
+//     try {
+//       return bcrypt.compareSync(password, hashedPassword);
+//     } catch (error) {
+//       console.error("Error al comparar contraseñas:", error);
+//       return false;
+//     }
+//   };
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------------------------//
 
